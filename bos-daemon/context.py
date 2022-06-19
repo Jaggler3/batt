@@ -33,9 +33,9 @@ class ServiceLocation:
 
 class Service(BattItem):
 	location: ServiceLocation = ServiceLocation()
-	routes: list[str] = []
-	whitelist: list[str] = []
+	routes: "list[str]" = []
+	whitelist: "list[str]" = []
 	command: str = ""
 
 class Event(BattItem):
-	commands: list[str] = []
+	commands: "list[str]" = []

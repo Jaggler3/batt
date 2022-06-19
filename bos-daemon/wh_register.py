@@ -1,6 +1,6 @@
 from urllib.parse import unquote, parse_qs
 
-from context import Config, Event, Service, ServiceAccess
+from context import Config, Context, Event, Service, ServiceAccess
 from webhandle import WebHandle
 
 def parseAccess(accessStr: str) -> int:
@@ -12,8 +12,8 @@ def parseAccess(accessStr: str) -> int:
 	return -1
 
 class Register(WebHandle):
-	def __init__(self):
-		super().__init__("/register")
+	def __init__(self, context: Context):
+		super().__init__("/register", context)
 
 	def perform(self, request: dict):
 		action = WebHandle.get_one(request["action"])
@@ -35,6 +35,9 @@ class Register(WebHandle):
 			config_item.name = name
 			for k, v in entries:
 				config_item.data[k] = WebHandle.get_one(v)
+
+			# add item
+			self.context.configs[config_item.name] = config_item
 		elif action == "service":
 			# build service item
 			service_item = Service()
@@ -65,10 +68,22 @@ class Register(WebHandle):
 			# command
 			if "command" in entries:
 				service_item.command = WebHandle.get_one(entries["command"])
-		
+
+
+			# add item
+			self.context.services[service_item.name] = service_item		
 		elif action == "event":
 			event_item = Event()
 			event_item.name = name
+
+			# event actions
+			if "commands" in entries:
+				query_commands = WebHandle.get_one(entries["commands"])
+				if query_commands:
+					event_item.commands = query_commands.split(";")
+
+			# add item
+			self.context.events[event_item.name] = event_item
 		else:
 			return { "error": "Invalid 'action' provided. `" + action + "`" }
 

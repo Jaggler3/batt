@@ -36,8 +36,8 @@ class RequestHandlerGenerator():
 		localContext = self.context
 
 		endpoints: list[WebHandle] = [
-			Dispatch(),
-			Register()
+			Dispatch(self.context),
+			Register(self.context)
 		]
 
 		class HttpRequestHandler(http.server.SimpleHTTPRequestHandler):

@@ -63,7 +63,7 @@ def main():
 			return
 	
 	# start daemon
-	print("Daemon is not running. Starting now...")
+	print("Daemon is not yet running. Starting now...")
 
 	# create / write pidfile
 	newPid = str(os.getpid())
